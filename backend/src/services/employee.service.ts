@@ -34,4 +34,16 @@ user: true,
 },
 });
 }
+
+static async getEmployeeById(id: string) {
+return await prisma.employee.findUnique({
+where: {
+id,
+},
+include: {
+user: true,
+},
+});
 }
+}
+
