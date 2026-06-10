@@ -4,13 +4,18 @@ import { EmployeeController } from "../controllers/employee.controller";
 const router = Router();
 
 router.post(
-"/create",
-EmployeeController.createEmployee
+  "/create",
+  EmployeeController.createEmployee
 );
 
 router.get(
-"/list",
-EmployeeController.getAllEmployees
+  "/list",
+  EmployeeController.getAllEmployees
+);
+
+router.get(
+  "/:id",
+  EmployeeController.getEmployeeById
 );
 
 export default router;
