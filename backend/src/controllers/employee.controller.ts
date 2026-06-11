@@ -72,6 +72,52 @@ const employee = await EmployeeService.getEmployeeById(
     message: error.message,
   });
 }
+}
+static async updateEmployee(
+  req: Request,
+  res: Response
+) {
+  try {
+    const { id } = req.params;
 
+    const employee =
+      await EmployeeService.updateEmployee(
+        id as string,
+        req.body
+      );
+
+    return res.status(200).json({
+      success: true,
+      data: employee,
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+static async deleteEmployee(
+  req: Request,
+  res: Response
+) {
+  try {
+    const { id } = req.params;
+
+    const employee =
+      await EmployeeService.deleteEmployee(
+        id as string
+      );
+
+    return res.status(200).json({
+      success: true,
+      data: employee,
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 }
 }

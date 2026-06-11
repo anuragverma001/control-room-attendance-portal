@@ -17,5 +17,12 @@ router.get(
   "/:id",
   EmployeeController.getEmployeeById
 );
-
+router.put(
+  "/:id",
+  EmployeeController.updateEmployee
+);
+router.delete(
+  "/:id",
+  EmployeeController.deleteEmployee
+);
 export default router;
