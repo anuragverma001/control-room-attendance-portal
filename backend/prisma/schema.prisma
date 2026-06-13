@@ -93,6 +93,7 @@ enum ShiftType {
 
 enum AttendanceStatus {
   PRESENT
+  LATE
   ABSENT
   HALF_DAY
   LEAVE

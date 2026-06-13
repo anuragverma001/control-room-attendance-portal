@@ -1,4 +1,6 @@
 import { prisma } from "../config/prisma";
+import { AttendanceStatus } from "@prisma/client";
+import { getShiftTiming } from "../utils/shift.util";
 
 export class AttendanceService {
   static async checkIn(data: {
@@ -32,6 +34,50 @@ export class AttendanceService {
       );
     }
 
+    const employee =
+      await prisma.employee.findUnique({
+        where: {
+          id: data.employeeId,
+        },
+      });
+
+    if (!employee) {
+      throw new Error(
+        "Employee not found"
+      );
+    }
+
+    const shift =
+      getShiftTiming(
+        employee.shiftType
+      );
+
+    const shiftStart =
+      new Date(today);
+
+    shiftStart.setHours(
+      shift.startHour,
+      shift.startMinute,
+      0,
+      0
+    );
+
+    const lateMinutes = Math.max(
+      0,
+      Math.floor(
+        (
+          today.getTime() -
+          shiftStart.getTime()
+        ) /
+          (1000 * 60)
+      )
+    );
+
+    const status =
+  lateMinutes > 15
+    ? AttendanceStatus.LATE
+    : AttendanceStatus.PRESENT;
+
     const attendance =
       await prisma.attendance.create({
         data: {
@@ -41,11 +87,18 @@ export class AttendanceService {
 
           checkInTime: today,
 
-          checkInSelfie: data.checkInSelfie,
+          checkInSelfie:
+            data.checkInSelfie,
 
-          checkInLatitude: data.checkInLatitude,
+          checkInLatitude:
+            data.checkInLatitude,
 
-          checkInLongitude: data.checkInLongitude,
+          checkInLongitude:
+            data.checkInLongitude,
+
+          lateMinutes,
+
+          status,
         },
       });
 
@@ -74,7 +127,8 @@ export class AttendanceService {
       );
     }
 
-    const checkOutTime = new Date();
+    const checkOutTime =
+      new Date();
 
     const totalHours =
       (
@@ -93,6 +147,7 @@ export class AttendanceService {
       },
     });
   }
+
   static async getAllAttendance() {
     return await prisma.attendance.findMany({
       include: {
@@ -103,5 +158,4 @@ export class AttendanceService {
       },
     });
   }
- 
 }
