@@ -29,11 +29,12 @@ export class AttendanceController {
     res: Response
   ) {
     try {
-      const { id } = req.params;
+      const id =
+        req.params.id as string;
 
       const attendance =
         await AttendanceService.checkOut(
-          id as string
+          id
         );
 
       return res.status(200).json({
@@ -55,6 +56,51 @@ export class AttendanceController {
     try {
       const attendance =
         await AttendanceService.getAllAttendance();
+
+      return res.status(200).json({
+        success: true,
+        data: attendance,
+      });
+    } catch (error: any) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  static async getTodayAttendance(
+    req: Request,
+    res: Response
+  ) {
+    try {
+      const data =
+        await AttendanceService.getTodayAttendance();
+
+      return res.status(200).json({
+        success: true,
+        data,
+      });
+    } catch (error: any) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  static async getAttendanceByEmployee(
+    req: Request,
+    res: Response
+  ) {
+    try {
+      const employeeId =
+        req.params.employeeId as string;
+
+      const attendance =
+        await AttendanceService.getAttendanceByEmployee(
+          employeeId
+        );
 
       return res.status(200).json({
         success: true,

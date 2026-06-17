@@ -127,29 +127,139 @@ export class AttendanceService {
       );
     }
 
-    const checkOutTime =
-      new Date();
+    const employee =
+  await prisma.employee.findUnique({
+    where: {
+      id: attendance.employeeId,
+    },
+  });
 
-    const totalHours =
+if (!employee) {
+  throw new Error(
+    "Employee not found"
+  );
+}
+
+const checkOutTime =
+  new Date();
+
+const shift =
+  getShiftTiming(
+    employee.shiftType
+  );
+
+  const shiftEnd =
+  new Date(checkOutTime);
+
+shiftEnd.setHours(
+  shift.endHour,
+  shift.endMinute,
+  0,
+  0
+);
+
+if (
+  "isOvernight" in shift &&
+  shift.isOvernight
+) {
+  shiftEnd.setDate(
+    shiftEnd.getDate() + 1
+  );
+}
+
+let overtimeMinutes = 0;
+
+if (
+  checkOutTime.getTime() >
+  shiftEnd.getTime()
+) {
+  overtimeMinutes =
+    Math.floor(
       (
         checkOutTime.getTime() -
-        attendance.checkInTime!.getTime()
+        shiftEnd.getTime()
       ) /
-      (1000 * 60 * 60);
+        (1000 * 60)
+    );
+}
 
-    return await prisma.attendance.update({
-      where: {
-        id: attendanceId,
-      },
-      data: {
-        checkOutTime,
-        totalHours,
-      },
-    });
+const totalHours =
+  (
+    checkOutTime.getTime() -
+    attendance.checkInTime!.getTime()
+  ) /
+  (1000 * 60 * 60);
+
+return await prisma.attendance.update({
+  where: {
+    id: attendanceId,
+  },
+  data: {
+    checkOutTime,
+    totalHours,
+    overtimeMinutes,
+  },
+});
   }
 
   static async getAllAttendance() {
     return await prisma.attendance.findMany({
+      include: {
+        employee: true,
+      },
+      orderBy: {
+        attendanceDate: "desc",
+      },
+    });
+  }
+  static async getTodayAttendance() {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+  
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+  
+    const attendance =
+      await prisma.attendance.findMany({
+        where: {
+          attendanceDate: {
+            gte: startOfDay,
+            lte: endOfDay,
+          },
+        },
+      });
+  
+    return {
+      total: attendance.length,
+  
+      present: attendance.filter(
+        (a) =>
+          a.status === "PRESENT"
+      ).length,
+  
+      late: attendance.filter(
+        (a) =>
+          a.status === "LATE"
+      ).length,
+  
+      halfDay: attendance.filter(
+        (a) =>
+          a.status === "HALF_DAY"
+      ).length,
+  
+      absent: attendance.filter(
+        (a) =>
+          a.status === "ABSENT"
+      ).length,
+    };
+  }
+  static async getAttendanceByEmployee(
+    employeeId: string
+  ) {
+    return await prisma.attendance.findMany({
+      where: {
+        employeeId,
+      },
       include: {
         employee: true,
       },

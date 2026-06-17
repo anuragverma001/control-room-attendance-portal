@@ -18,4 +18,13 @@ router.get(
   AttendanceController.getAllAttendance
 );
 
+router.get(
+  "/today",
+  AttendanceController.getTodayAttendance
+);
+router.get(
+  "/employee/:employeeId",
+  AttendanceController.getAttendanceByEmployee
+);
+
 export default router;

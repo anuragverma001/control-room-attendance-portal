@@ -18,6 +18,8 @@ export const SHIFT_TIMINGS = {
       startMinute: 0,
       endHour: 6,
       endMinute: 0,
+      isOvernight: true,
+    
     },
   
     GENERAL: {

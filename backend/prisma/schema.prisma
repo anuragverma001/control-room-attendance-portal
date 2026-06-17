@@ -89,6 +89,7 @@ enum ShiftType {
   MORNING
   EVENING
   NIGHT
+  GENERAL
 }
 
 enum AttendanceStatus {
