@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+
+# Build
+dist/
+build/
+
+# Logs
+logs/
+*.log
+
+# Prisma Generated Files
+node_modules/.prisma/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Cursor
+.cursor/
+
+# Coverage
+coverage/
