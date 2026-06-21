@@ -113,4 +113,28 @@ export class AttendanceController {
       });
     }
   }
+  static async getMonthlyAttendance(
+    req: Request,
+    res: Response
+  ) {
+    try {
+      const employeeId =
+        req.params.employeeId as string;
+  
+      const data =
+        await AttendanceService.getMonthlyAttendance(
+          employeeId
+        );
+  
+      return res.status(200).json({
+        success: true,
+        data,
+      });
+    } catch (error: any) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
 }

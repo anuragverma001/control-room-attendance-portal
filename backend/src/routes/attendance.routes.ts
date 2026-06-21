@@ -26,5 +26,8 @@ router.get(
   "/employee/:employeeId",
   AttendanceController.getAttendanceByEmployee
 );
-
+router.get(
+  "/monthly/:employeeId",
+  AttendanceController.getMonthlyAttendance
+);
 export default router;
