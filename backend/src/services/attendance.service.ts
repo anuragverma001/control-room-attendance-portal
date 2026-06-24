@@ -197,21 +197,35 @@ if (
 }
 
 const totalHours =
-  (
-    checkOutTime.getTime() -
-    attendance.checkInTime!.getTime()
-  ) /
-  (1000 * 60 * 60);
+(
+checkOutTime.getTime() -
+attendance.checkInTime!.getTime()
+) /
+(1000 * 60 * 60);
+
+let finalStatus =
+attendance.status;
+
+if (totalHours < 4) {
+finalStatus =
+AttendanceStatus.ABSENT;
+} else if (
+totalHours < 6
+) {
+finalStatus =
+AttendanceStatus.HALF_DAY;
+}
 
 return await prisma.attendance.update({
-  where: {
-    id: attendanceId,
-  },
-  data: {
-    checkOutTime,
-    totalHours,
-    overtimeMinutes,
-  },
+where: {
+id: attendanceId,
+},
+data: {
+checkOutTime,
+totalHours,
+overtimeMinutes,
+status: finalStatus,
+},
 });
 }
 static async getAllAttendance() {
