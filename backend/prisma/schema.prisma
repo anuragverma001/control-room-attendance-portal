@@ -8,77 +8,78 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String?  @unique
-  mobile    String?  @unique
-  password  String
-  role      Role
+  id       String  @id @default(uuid())
+  email    String? @unique
+  mobile   String? @unique
+  password String
+  role     Role
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  employee  Employee?
+  employee Employee?
 }
 
 model Employee {
-  id               String   @id @default(uuid())
-  employeeCode     String   @unique
-  fullName         String
+  id           String @id @default(uuid())
+  employeeCode String @unique
+  fullName     String
 
-  email            String?
-  mobile           String
+  email  String?
+  mobile String
 
-  aadhaarNumber    String?
-  panNumber        String?
+  aadhaarNumber String?
+  panNumber     String?
 
   address          String?
   emergencyContact String?
 
-  shiftType        ShiftType
+  shiftType ShiftType
 
-  weeklyOffDay     String?
+  weeklyOffDay String?
 
-  userId           String   @unique
-  user             User     @relation(fields: [userId], references: [id])
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
 
-  attendances      Attendance[]
-  leaves           Leave[]
+  attendances Attendance[]
+  leaves      Leave[]
+  salary      Salary?
 
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Attendance {
-  id                String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  employeeId        String
-  employee          Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
 
-  attendanceDate    DateTime
+  attendanceDate DateTime
 
-  checkInTime       DateTime?
-  checkOutTime      DateTime?
+  checkInTime  DateTime?
+  checkOutTime DateTime?
 
-  checkInSelfie     String?
-  checkOutSelfie    String?
+  checkInSelfie  String?
+  checkOutSelfie String?
 
-  checkInLatitude   Float?
-  checkInLongitude  Float?
+  checkInLatitude  Float?
+  checkInLongitude Float?
 
   checkOutLatitude  Float?
   checkOutLongitude Float?
 
-  totalHours        Float?   @default(0)
+  totalHours Float? @default(0)
 
-  status            AttendanceStatus @default(PRESENT)
+  status AttendanceStatus @default(PRESENT)
 
-  lateMinutes       Int @default(0)
-  overtimeMinutes   Int @default(0)
+  lateMinutes     Int @default(0)
+  overtimeMinutes Int @default(0)
 
-  remarks           String?
+  remarks String?
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {
@@ -99,28 +100,28 @@ enum AttendanceStatus {
   ABSENT
   HALF_DAY
   LEAVE
-
 }
+
 model Leave {
-  id          String      @id @default(uuid())
+  id String @id @default(uuid())
 
-  employeeId  String
-  employee    Employee    @relation(fields: [employeeId], references: [id])
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
 
-  leaveType   LeaveType
+  leaveType LeaveType
 
-  fromDate    DateTime
-  toDate      DateTime
+  fromDate DateTime
+  toDate   DateTime
 
-  reason      String?
+  reason String?
 
-  status      LeaveStatus @default(PENDING)
+  status LeaveStatus @default(PENDING)
 
-  approvedBy  String?
-  approvedAt  DateTime?
+  approvedBy String?
+  approvedAt DateTime?
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum LeaveType {
@@ -135,3 +136,20 @@ enum LeaveStatus {
   REJECTED
 }
 
+model Salary {
+  id String @id @default(uuid())
+
+  employeeId String   @unique
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  basicSalary Float
+
+  hra       Float @default(0)
+  da        Float @default(0)
+  allowance Float @default(0)
+
+  lateDeductionPerDay Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
