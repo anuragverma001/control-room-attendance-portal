@@ -103,6 +103,12 @@ enum AttendanceStatus {
   HALF_DAY
   LEAVE
 }
+enum PayrollStatus {
+  GENERATED
+  PAID
+  CANCELLED
+}
+
 
 model Leave {
   id String @id @default(uuid())
@@ -180,7 +186,10 @@ model Payroll {
 
   netSalary         Float
 
+  status            PayrollStatus @default(GENERATED)
+
   generatedAt       DateTime @default(now())
 
   @@unique([employeeId, month, year])
 }
+
