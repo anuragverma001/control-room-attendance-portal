@@ -8,6 +8,7 @@ import authRouter from "./routes/auth.routes";
 import employeeRouter from "./routes/employee.routes";
 import attendanceRouter from "./routes/attendance.routes";
 import leaveRouter from "./routes/leave.routes";
+import salaryRouter from "./routes/salary.routes";
 
 const app = express();
 
@@ -21,5 +22,6 @@ app.use("/api/auth", authRouter);
 app.use("/api/employee", employeeRouter);
 app.use("/api/attendance", attendanceRouter);
 app.use("/api/leave", leaveRouter);
+app.use("/api/salary", salaryRouter);
 
 export default app;

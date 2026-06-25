@@ -44,6 +44,8 @@ model Employee {
   attendances Attendance[]
   leaves      Leave[]
   salary      Salary?
+  payrolls    Payroll[]
+
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -152,4 +154,33 @@ model Salary {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+model Payroll {
+  id                String   @id @default(uuid())
+
+  employeeId        String
+  employee          Employee @relation(fields: [employeeId], references: [id])
+
+  month             Int
+  year              Int
+
+  grossSalary       Float
+
+  presentDays       Int
+  absentDays        Int
+  halfDays          Int
+  leaveDays         Int
+  lateCount         Int
+
+  absentDeduction   Float @default(0)
+  halfDayDeduction  Float @default(0)
+  lateDeduction     Float @default(0)
+
+  overtimeAmount    Float @default(0)
+
+  netSalary         Float
+
+  generatedAt       DateTime @default(now())
+
+  @@unique([employeeId, month, year])
 }
