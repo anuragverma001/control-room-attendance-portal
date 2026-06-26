@@ -7,15 +7,34 @@ export class AttendanceController {
     res: Response
   ) {
     try {
+  
       const attendance =
-        await AttendanceService.checkIn(
-          req.body
-        );
+        await AttendanceService.checkIn({
+          employeeId:
+            req.body.employeeId,
+  
+          checkInLatitude:
+            Number(req.body.latitude),
+  
+          checkInLongitude:
+            Number(req.body.longitude),
+  
+          checkInSelfie:
+            (req as any).file?.path,
+            faceVerified:
+  req.body.faceVerified === "true" ||
+  req.body.faceVerified === true,
 
+faceScore:
+  Number(req.body.faceScore),
+
+        });
+  
       return res.status(201).json({
         success: true,
         data: attendance,
       });
+  
     } catch (error: any) {
       return res.status(400).json({
         success: false,
@@ -23,6 +42,7 @@ export class AttendanceController {
       });
     }
   }
+  
 
   static async checkOut(
     req: Request,
@@ -98,15 +118,15 @@ export class AttendanceController {
         req.params.employeeId as string;
 
       const attendance =
-        await AttendanceService.getAttendanceByEmployee(
-          employeeId
-        );
+  await AttendanceService.getAttendanceByEmployee(
+    employeeId
+  );
 
-      return res.status(200).json({
-        success: true,
-        data: attendance,
-      });
-    } catch (error: any) {
+return res.status(200).json({
+  success: true,
+  data: attendance,
+});
+    }catch (error: any) {
       return res.status(400).json({
         success: false,
         message: error.message,

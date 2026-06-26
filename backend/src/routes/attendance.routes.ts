@@ -1,3 +1,4 @@
+import { upload } from "../middleware/upload.middleware";
 import { Router } from "express";
 import { AttendanceController } from "../controllers/attendance.controller";
 
@@ -5,8 +6,10 @@ const router = Router();
 
 router.post(
   "/check-in",
+  upload.single("selfie"),
   AttendanceController.checkIn
 );
+
 
 router.put(
   "/check-out/:id",

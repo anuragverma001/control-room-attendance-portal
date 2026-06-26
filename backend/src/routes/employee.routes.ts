@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { EmployeeController } from "../controllers/employee.controller";
+import { faceUpload } from "../middleware/face-upload.middleware";
+import { FaceController } from "../controllers/face.controller";
 
 const router = Router();
 
@@ -25,4 +27,10 @@ router.delete(
   "/:id",
   EmployeeController.deleteEmployee
 );
+router.post(
+  "/:id/upload-face",
+  faceUpload.single("face"),
+  FaceController.uploadFace
+);
+
 export default router;

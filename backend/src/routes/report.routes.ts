@@ -13,4 +13,13 @@ router.get(
   ReportController.getMonthlyAttendanceReport
 );
 
+router.get(
+  "/employee/:employeeId",
+  ReportController.getEmployeeAttendanceHistory
+);
+router.get(
+  "/attendance/late",
+  ReportController.getLateComingReport
+);
+
 export default router;

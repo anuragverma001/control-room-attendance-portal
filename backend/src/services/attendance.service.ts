@@ -1,6 +1,7 @@
 import { prisma } from "../config/prisma";
 import { AttendanceStatus } from "@prisma/client";
 import { getShiftTiming } from "../utils/shift.util";
+import { GPSService } from "./gps.service";
 
 export class AttendanceService {
 static async checkIn(data: {
@@ -8,6 +9,9 @@ employeeId: string;
 checkInSelfie?: string;
 checkInLatitude?: number;
 checkInLongitude?: number;
+faceVerified?: boolean;
+faceScore?: number;
+
 }) {
 const today = new Date();
 
@@ -89,7 +93,29 @@ const status =
   lateMinutes > 15
     ? AttendanceStatus.LATE
     : AttendanceStatus.PRESENT;
-
+    const gps =
+    GPSService.validateLocation(
+      data.checkInLatitude || 0,
+      data.checkInLongitude || 0
+    );
+    if (!data.faceVerified) {
+      throw new Error(
+        "Face verification failed"
+      );
+    }
+    
+    if ((data.faceScore || 0) < 80) {
+      throw new Error(
+        "Face match score below 80%"
+      );
+    }
+  
+  if (!gps.valid) {
+    throw new Error(
+      `Outside office radius. Distance: ${gps.distance} meters`
+    );
+  }
+  
 const attendance =
   await prisma.attendance.create({
     data: {

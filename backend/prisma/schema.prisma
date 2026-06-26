@@ -45,7 +45,7 @@ model Employee {
   leaves      Leave[]
   salary      Salary?
   payrolls    Payroll[]
-
+  faceImage   String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

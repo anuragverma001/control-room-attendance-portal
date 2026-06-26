@@ -68,4 +68,54 @@ export class ReportController {
   
     }
   }
+  static async getEmployeeAttendanceHistory(
+    req: Request,
+    res: Response
+  ) {
+    try {
+  
+      const employeeId = String(req.params.employeeId);
+  
+      const report =
+        await ReportService.getEmployeeAttendanceHistory(
+          employeeId
+        );
+  
+      return res.status(200).json({
+        success: true,
+        data: report
+      });
+  
+    } catch (error: any) {
+  
+      return res.status(500).json({
+        success: false,
+        message: error.message
+      });
+    }
+  }
+  static async getLateComingReport(
+    req: Request,
+    res: Response
+  ) {
+    try {
+  
+      const report =
+        await ReportService.getLateComingReport();
+  
+      return res.status(200).json({
+        success: true,
+        data: report
+      });
+  
+    } catch (error: any) {
+  
+      return res.status(500).json({
+        success: false,
+        message: error.message
+      });
+  
+    }
 }
+}
+

@@ -85,6 +85,62 @@ static async getMonthlyAttendanceReport(
       year,
       totalRecords: records.length,
       records
-    };
+    };    
   }
+  /**
+ * Employee Attendance History
+ */
+static async getEmployeeAttendanceHistory(
+  employeeId: string
+) {
+
+  const records =
+    await prisma.attendance.findMany({
+
+      where: {
+        employeeId
+      },
+
+      include: {
+        employee: true
+      },
+
+      orderBy: {
+        attendanceDate: "desc"
+      }
+
+    });
+
+  return {
+    employeeId,
+    totalRecords: records.length,
+    records
+  };
+}
+  static async getLateComingReport() {
+
+    const records =
+      await prisma.attendance.findMany({
+  
+        where: {
+          lateMinutes: {
+            gt: 0
+          }
+        },
+  
+        include: {
+          employee: true
+        },
+  
+        orderBy: {
+          lateMinutes: "desc"
+        }
+  
+      });
+  
+    return {
+      totalRecords: records.length,
+      records
+    };
+  }  
 }
