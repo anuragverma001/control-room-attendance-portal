@@ -9,6 +9,9 @@ import employeeRouter from "./routes/employee.routes";
 import attendanceRouter from "./routes/attendance.routes";
 import leaveRouter from "./routes/leave.routes";
 import salaryRouter from "./routes/salary.routes";
+import dashboardRouter from "./routes/dashboard.routes";
+import reportRouter from "./routes/report.routes";
+
 
 const app = express();
 
@@ -23,5 +26,8 @@ app.use("/api/employee", employeeRouter);
 app.use("/api/attendance", attendanceRouter);
 app.use("/api/leave", leaveRouter);
 app.use("/api/salary", salaryRouter);
+app.use("/api/dashboard", dashboardRouter);
+app.use("/api/reports", reportRouter);
+
 
 export default app;
