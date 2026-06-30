@@ -1,7 +1,22 @@
+import bcrypt from "bcryptjs";
 import { prisma } from "../config/prisma";
 
 export class EmployeeService {
   static async createEmployee(data: any) {
+    const tempPassword = "Employee@123";
+
+    const hashedPassword =
+      await bcrypt.hash(tempPassword, 10);
+
+    const user = await prisma.user.create({
+      data: {
+        email: data.email,
+        mobile: data.mobile,
+        password: hashedPassword,
+        role: "EMPLOYEE",
+      },
+    });
+
     const employee = await prisma.employee.create({
       data: {
         employeeCode: data.employeeCode,
@@ -18,11 +33,17 @@ export class EmployeeService {
         shiftType: data.shiftType,
         weeklyOffDay: data.weeklyOffDay,
 
-        userId: data.userId,
+        userId: user.id,
       },
     });
 
-    return employee;
+    return {
+      employee,
+      loginCredentials: {
+        email: data.email,
+        password: tempPassword,
+      },
+    };
   }
 
   static async getAllEmployees() {
@@ -55,6 +76,7 @@ export class EmployeeService {
       data,
     });
   }
+
   static async deleteEmployee(
     id: string
   ) {
@@ -63,5 +85,6 @@ export class EmployeeService {
         id,
       },
     });
-  }  
+  }
 }
+
