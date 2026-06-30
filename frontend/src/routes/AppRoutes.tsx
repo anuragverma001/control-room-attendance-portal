@@ -1,3 +1,5 @@
+import EditEmployee from "../pages/EditEmployee";
+import AddEmployee from "../pages/AddEmployee";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../pages/Login";
@@ -29,6 +31,14 @@ export default function AppRoutes() {
             path="/employees"
             element={<Employees />}
           />
+          <Route
+  path="/employees/add"
+  element={<AddEmployee />}
+/>
+<Route
+  path="/employees/edit/:id"
+  element={<EditEmployee />}
+/>
         </Route>
       </Routes>
     </BrowserRouter>
