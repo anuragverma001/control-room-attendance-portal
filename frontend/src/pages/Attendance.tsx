@@ -5,6 +5,8 @@ export default function Attendance() {
   const [attendance, setAttendance] = useState<any[]>([]);
   const [todayStats, setTodayStats] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [selfie, setSelfie] = useState<File | null>(null);
+  const [location, setLocation] = useState<any>(null);
 
   const loadData = async () => {
     try {
@@ -25,51 +27,71 @@ export default function Attendance() {
     loadData();
   }, []);
 
+  const getLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      () => {
+        alert("Unable to fetch location");
+      }
+    );
+  };
+
   const handleCheckIn = async () => {
     try {
       setLoading(true);
 
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
+      if (!location) {
+        alert("Please get GPS location first");
+        return;
+      }
 
-          const formData = new FormData();
+      if (!selfie) {
+        alert("Please upload selfie");
+        return;
+      }
 
-          formData.append(
-            "employeeId",
-            localStorage.getItem("employeeId") || ""
-          );
-          
+      const formData = new FormData();
 
-          formData.append(
-            "latitude",
-            String(position.coords.latitude)
-          );
-
-          formData.append(
-            "longitude",
-            String(position.coords.longitude)
-          );
-
-          // Temporary
-          formData.append(
-            "faceVerified",
-            "true"
-          );
-
-          formData.append(
-            "faceScore",
-            "95"
-          );
-
-          await attendanceApi.checkIn(
-            formData
-          );
-
-          alert("Check-In Successful");
-
-          loadData();
-        }
+      formData.append(
+        "employeeId",
+        localStorage.getItem("employeeId") || ""
       );
+
+      formData.append(
+        "latitude",
+        String(location.latitude)
+      );
+
+      formData.append(
+        "longitude",
+        String(location.longitude)
+      );
+
+      formData.append(
+        "selfie",
+        selfie
+      );
+
+      formData.append(
+        "faceVerified",
+        "true"
+      );
+
+      formData.append(
+        "faceScore",
+        "95"
+      );
+
+      await attendanceApi.checkIn(formData);
+
+      alert("Check-In Successful");
+
+      loadData();
     } catch (error: any) {
       alert(
         error?.response?.data?.message ||
@@ -81,52 +103,99 @@ export default function Attendance() {
   };
 
   return (
-    <div>
-      <h2>Attendance</h2>
+    <div className="p-6">
+      <h1 className="text-3xl font-bold mb-6">
+        Attendance Management
+      </h1>
 
-      <button
-        onClick={handleCheckIn}
-        disabled={loading}
-      >
-        Check In
-      </button>
+      <div className="flex gap-4 mb-6">
+        <button
+          onClick={getLocation}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Get GPS
+        </button>
 
-      <br />
-      <br />
+        <button
+          onClick={handleCheckIn}
+          disabled={loading}
+          className="bg-green-600 text-white px-4 py-2 rounded"
+        >
+          {loading ? "Checking..." : "Check In"}
+        </button>
+      </div>
 
-      {todayStats && (
-        <div>
-          <h3>Today's Summary</h3>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) =>
+          setSelfie(
+            e.target.files?.[0] || null
+          )
+        }
+        className="mb-4"
+      />
 
-          <p>Total: {todayStats.total}</p>
-          <p>Present: {todayStats.present}</p>
-          <p>Late: {todayStats.late}</p>
-          <p>Half Day: {todayStats.halfDay}</p>
-          <p>Absent: {todayStats.absent}</p>
+      {location && (
+        <div className="mb-4 p-3 border rounded">
+          <p>Latitude: {location.latitude}</p>
+          <p>Longitude: {location.longitude}</p>
         </div>
       )}
 
-      <hr />
+      {todayStats && (
+        <div className="grid grid-cols-5 gap-4 mb-6">
+          <div className="border p-4 rounded">
+            Total: {todayStats.total}
+          </div>
 
-      <table border={1}>
+          <div className="border p-4 rounded">
+            Present: {todayStats.present}
+          </div>
+
+          <div className="border p-4 rounded">
+            Late: {todayStats.late}
+          </div>
+
+          <div className="border p-4 rounded">
+            Half Day: {todayStats.halfDay}
+          </div>
+
+          <div className="border p-4 rounded">
+            Absent: {todayStats.absent}
+          </div>
+        </div>
+      )}
+
+      <table className="w-full border border-gray-300">
         <thead>
           <tr>
-            <th>Employee</th>
-            <th>Status</th>
-            <th>Check In</th>
+            <th className="border p-2 bg-gray-100">
+              Employee
+            </th>
+
+            <th className="border p-2 bg-gray-100">
+              Status
+            </th>
+
+            <th className="border p-2 bg-gray-100">
+              Check In
+            </th>
           </tr>
         </thead>
 
         <tbody>
           {attendance.map((item) => (
             <tr key={item.id}>
-              <td>
+              <td className="border p-2">
                 {item.employee?.fullName}
               </td>
 
-              <td>{item.status}</td>
+              <td className="border p-2">
+                {item.status}
+              </td>
 
-              <td>
+              <td className="border p-2">
                 {item.checkInTime
                   ? new Date(
                       item.checkInTime
