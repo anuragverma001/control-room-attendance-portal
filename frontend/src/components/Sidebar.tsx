@@ -14,6 +14,11 @@ export default function Sidebar() {
         <Link to="/leave">Leave</Link>
         <Link to="/salary">Salary</Link>
       </nav>
+      <li>
+  <Link to="/attendance">
+    Attendance
+  </Link>
+</li>
     </div>
   );
 }

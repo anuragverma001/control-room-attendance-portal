@@ -33,8 +33,16 @@ const token = generateToken(
   user.role
 );
 
+const employee =
+  await prisma.employee.findUnique({
+    where: {
+      userId: user.id,
+    },
+  });
+
 return {
   user,
+  employeeId: employee?.id || null,
   token,
 };
 
@@ -44,11 +52,13 @@ static async login(data: {
 email: string;
 password: string;
 }) {
+  console.log("EMAIL:", data.email);
 const user = await prisma.user.findUnique({
 where: {
 email: data.email,
 },
 });
+console.log("USER:", user);
 
 if (!user) {
   throw new Error("Invalid credentials");

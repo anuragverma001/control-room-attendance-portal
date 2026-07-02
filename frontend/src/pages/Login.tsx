@@ -15,18 +15,25 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       setLoading(true);
-
+  
       const response = await loginUser(
         email,
         password
       );
-
+      console.log(response);
+      
+      localStorage.setItem(
+        "employeeId",
+        response.data.employeeId || ""
+      );
+      
       login(
         response.data.user,
         response.data.token
       );
-
+  
       navigate("/dashboard");
+  
     } catch (error) {
       console.error(error);
       alert("Invalid email or password");

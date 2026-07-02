@@ -1,3 +1,4 @@
+import Attendance from "../pages/Attendance";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../pages/Login";
@@ -29,6 +30,11 @@ export default function AppRoutes() {
             path="/employees"
             element={<Employees />}
           />
+          <Route
+  path="/attendance"
+  element={<Attendance />}
+/>
+
         </Route>
       </Routes>
     </BrowserRouter>
