@@ -20,13 +20,14 @@ export default function Login() {
         email,
         password
       );
-      console.log(response);
-      
+  
+      console.log("LOGIN RESPONSE", response.data);
+  
       localStorage.setItem(
         "employeeId",
-        response.data.employeeId || ""
+        response.data.employeeId
       );
-      
+  
       login(
         response.data.user,
         response.data.token
@@ -34,9 +35,17 @@ export default function Login() {
   
       navigate("/dashboard");
   
-    } catch (error) {
-      console.error(error);
-      alert("Invalid email or password");
+    } catch (error: any) {
+      console.error("LOGIN ERROR:", error);
+  
+      if (error?.response) {
+        console.log(
+          "RESPONSE:",
+          error.response.data
+        );
+      }
+  
+      alert("Login Failed - Check Console");
     } finally {
       setLoading(false);
     }

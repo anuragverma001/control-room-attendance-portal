@@ -40,6 +40,8 @@ const employee =
     },
   });
 
+console.log("LOGIN EMPLOYEE:", employee);
+
 return {
   user,
   employeeId: employee?.id || null,
@@ -49,39 +51,50 @@ return {
 }
 
 static async login(data: {
-email: string;
-password: string;
+  email: string;
+  password: string;
 }) {
   console.log("EMAIL:", data.email);
-const user = await prisma.user.findUnique({
-where: {
-email: data.email,
-},
-});
-console.log("USER:", user);
 
-if (!user) {
-  throw new Error("Invalid credentials");
-}
+  const user = await prisma.user.findUnique({
+    where: {
+      email: data.email,
+    },
+  });
 
-const isPasswordValid = await bcrypt.compare(
-  data.password,
-  user.password
-);
+  console.log("USER:", user);
 
-if (!isPasswordValid) {
-  throw new Error("Invalid credentials");
-}
+  if (!user) {
+    throw new Error("Invalid credentials");
+  }
 
-const token = generateToken(
-  user.id,
-  user.role
-);
+  const isPasswordValid = await bcrypt.compare(
+    data.password,
+    user.password
+  );
 
-return {
-  user,
-  token,
-};
+  if (!isPasswordValid) {
+    throw new Error("Invalid credentials");
+  }
 
+  const token = generateToken(
+    user.id,
+    user.role
+  );
+
+  const employee =
+    await prisma.employee.findUnique({
+      where: {
+        userId: user.id,
+      },
+    });
+
+  console.log("LOGIN EMPLOYEE:", employee);
+
+  return {
+    user,
+    employeeId: employee?.id || null,
+    token,
+  };
 }
 }
