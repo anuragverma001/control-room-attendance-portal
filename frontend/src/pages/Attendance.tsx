@@ -1,31 +1,59 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Webcam from "react-webcam";
 import { attendanceApi } from "../api/attendanceApi";
 
 export default function Attendance() {
   const [attendance, setAttendance] = useState<any[]>([]);
   const [todayStats, setTodayStats] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [selfie, setSelfie] = useState<File | null>(null);
+  const [activeAttendance, setActiveAttendance] =useState<any>(null);
   const [location, setLocation] = useState<any>(null);
+  const [cameraOpen, setCameraOpen] =
+    useState(false);
+
+  const [capturedImage, setCapturedImage] =
+    useState<string | null>(null);
+
+  const webcamRef = useRef<Webcam>(null);
 
   const loadData = async () => {
     try {
       const statsRes =
         await attendanceApi.getTodayAttendance();
-
-      const attendanceRes =
+  
+        const attendanceRes =
         await attendanceApi.getAllAttendance();
-
+      
+      console.log(
+        "ATTENDANCE DATA",
+        attendanceRes.data.data
+      );
+      
+  
       setTodayStats(statsRes.data.data);
       setAttendance(attendanceRes.data.data);
+  
+      const employeeId =
+        localStorage.getItem("employeeId");
+  
+      const todayRecord =
+        attendanceRes.data.data.find(
+          (item: any) =>
+            item.employeeId === employeeId &&
+            !item.checkOutTime
+      );
+  
+      setActiveAttendance(todayRecord);
     } catch (error) {
       console.error(error);
     }
   };
 
+
   useEffect(() => {
     loadData();
   }, []);
+  console.log("Active Attendance:", activeAttendance);
 
   const getLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -41,6 +69,42 @@ export default function Attendance() {
     );
   };
 
+  const captureSelfie = () => {
+    const imageSrc =
+      webcamRef.current?.getScreenshot();
+
+    if (imageSrc) {
+      setCapturedImage(imageSrc);
+      setCameraOpen(false);
+    }
+  };
+
+  const dataURLtoFile = (
+    dataurl: string,
+    filename: string
+  ) => {
+    const arr = dataurl.split(",");
+
+    const mime =
+      arr[0].match(/:(.*?);/)?.[1] || "";
+
+    const bstr = atob(arr[1]);
+
+    let n = bstr.length;
+
+    const u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new File(
+      [u8arr],
+      filename,
+      { type: mime }
+    );
+  };
+
   const handleCheckIn = async () => {
     try {
       setLoading(true);
@@ -50,10 +114,16 @@ export default function Attendance() {
         return;
       }
 
-      if (!selfie) {
-        alert("Please upload selfie");
+      if (!capturedImage) {
+        alert("Please capture selfie");
         return;
       }
+
+      const selfieFile =
+        dataURLtoFile(
+          capturedImage,
+          "selfie.jpg"
+        );
 
       const formData = new FormData();
 
@@ -74,7 +144,7 @@ export default function Attendance() {
 
       formData.append(
         "selfie",
-        selfie
+        selfieFile
       );
 
       formData.append(
@@ -101,6 +171,29 @@ export default function Attendance() {
       setLoading(false);
     }
   };
+  const handleCheckOut = async () => {
+    try {
+      if (!activeAttendance) {
+        alert("No active attendance found");
+        return;
+      }
+  
+      await attendanceApi.checkOut(
+        activeAttendance.id
+      );
+  
+      alert("Check-Out Successful");
+  
+      loadData();
+    } catch (error: any) {
+      alert(
+        error?.response?.data?.message ||
+          "Check-Out Failed"
+      );
+    }
+  };
+
+
 
   return (
     <div className="p-6">
@@ -108,7 +201,7 @@ export default function Attendance() {
         Attendance Management
       </h1>
 
-      <div className="flex gap-4 mb-6">
+      <div className="flex gap-4 mb-6 flex-wrap">
         <button
           onClick={getLocation}
           className="bg-blue-600 text-white px-4 py-2 rounded"
@@ -117,29 +210,85 @@ export default function Attendance() {
         </button>
 
         <button
-          onClick={handleCheckIn}
-          disabled={loading}
+          type="button"
+          onClick={() =>
+            setCameraOpen(true)
+          }
           className="bg-green-600 text-white px-4 py-2 rounded"
         >
-          {loading ? "Checking..." : "Check In"}
+          Open Camera
         </button>
+
+        <button
+          onClick={handleCheckIn}
+          disabled={loading}
+          className="bg-purple-600 text-white px-4 py-2 rounded"
+        >
+          {loading
+            ? "Checking..."
+            : "Check In"}
+        </button>
+        <button
+  onClick={handleCheckOut}
+  disabled={!activeAttendance}
+  className="bg-red-600 text-white px-4 py-2 rounded"
+>
+  Check Out
+</button>
+
       </div>
 
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) =>
-          setSelfie(
-            e.target.files?.[0] || null
-          )
-        }
-        className="mb-4"
-      />
+      {cameraOpen && (
+        <div className="mb-4">
+          <Webcam
+            ref={webcamRef}
+            screenshotFormat="image/jpeg"
+            className="rounded border"
+            videoConstraints={{
+              facingMode: "user",
+            }}
+          />
+
+          <button
+            type="button"
+            onClick={captureSelfie}
+            className="mt-2 bg-orange-600 text-white px-4 py-2 rounded"
+          >
+            Capture Selfie
+          </button>
+          <button
+  onClick={handleCheckOut}
+  className="bg-red-600 text-white px-4 py-2 rounded"
+>
+  Check Out
+</button>
+        </div>
+      )}
+
+      {capturedImage && (
+        <div className="mb-4">
+          <h3 className="font-semibold mb-2">
+            Selfie Preview
+          </h3>
+
+          <img
+            src={capturedImage}
+            alt="Selfie"
+            width={250}
+            className="border rounded"
+          />
+        </div>
+      )}
 
       {location && (
         <div className="mb-4 p-3 border rounded">
-          <p>Latitude: {location.latitude}</p>
-          <p>Longitude: {location.longitude}</p>
+          <p>
+            Latitude: {location.latitude}
+          </p>
+
+          <p>
+            Longitude: {location.longitude}
+          </p>
         </div>
       )}
 
@@ -181,6 +330,14 @@ export default function Attendance() {
             <th className="border p-2 bg-gray-100">
               Check In
             </th>
+            <th className="border p-2 bg-gray-100">
+  Check Out
+</th>
+
+<th className="border p-2 bg-gray-100">
+  Working Hours
+</th>
+
           </tr>
         </thead>
 
@@ -202,6 +359,18 @@ export default function Attendance() {
                     ).toLocaleString()
                   : "-"}
               </td>
+              <td className="border p-2">
+  {item.checkOutTime
+    ? new Date(
+        item.checkOutTime
+      ).toLocaleString()
+    : "-"}
+</td>
+
+<td className="border p-2">
+  {item.workingHours || "-"}
+</td>
+
             </tr>
           ))}
         </tbody>

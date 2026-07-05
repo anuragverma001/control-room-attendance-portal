@@ -4,7 +4,7 @@ export class GPSService {
   static OFFICE_LAT = 26.8467;
   static OFFICE_LNG = 80.9462;
 
-  static ALLOWED_RADIUS = 50;
+  static ALLOWED_RADIUS = 5000;
 
   static validateLocation(
     latitude: number,
