@@ -4,15 +4,35 @@ import payrollService from "../services/payrollService";
 export default function Payroll() {
   const [payrolls, setPayrolls] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const handleGeneratePayroll = async () => {
+    try {
+      const today = new Date();
+  
+      await payrollService.generatePayroll(
+        today.getMonth() + 1,
+        today.getFullYear()
+      );
+  
+      alert("Payroll Generated");
+  
+      loadPayrolls();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to generate payroll");
+    }
+  };
 
   const loadPayrolls = async () => {
     try {
       setLoading(true);
-
+  
       const response =
         await payrollService.getAllPayrolls();
-
-      setPayrolls(response.data || []);
+  
+      setPayrolls(
+        response.data || []
+      );
+  
     } catch (error) {
       console.error(error);
     } finally {
@@ -33,10 +53,12 @@ export default function Payroll() {
         </h1>
 
         <button
-          className="bg-green-600 text-white px-4 py-2 rounded"
-        >
-          Generate Payroll
-        </button>
+  onClick={handleGeneratePayroll}
+  className="bg-green-600 text-white px-4 py-2 rounded"
+>
+  Generate Payroll
+</button>
+
       </div>
 
       <div className="grid grid-cols-4 gap-4 mb-6">
@@ -139,16 +161,25 @@ export default function Payroll() {
                   </td>
 
                   <td className="p-3">
-                    ₹{item.grossSalary}
+                  ₹{Number(item.grossSalary).toFixed(2)}
                   </td>
 
                   <td className="p-3">
-                    ₹{item.netSalary}
+                  ₹{Number(item.netSalary).toFixed(2)}
                   </td>
 
                   <td className="p-3">
-                    {item.status}
-                  </td>
+  <span
+    className={`px-2 py-1 rounded text-white ${
+      item.status === "PAID"
+        ? "bg-green-600"
+        : "bg-yellow-500"
+    }`}
+  >
+    {item.status}
+  </span>
+</td>
+
                 </tr>
               ))
             )}

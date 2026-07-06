@@ -7,6 +7,9 @@ import Attendance from "../pages/Attendance";
 import AddEmployee from "../pages/AddEmployee";
 import EditEmployee from "../pages/EditEmployee";
 import Payroll from "../pages/Payroll";
+import Leave from "../pages/Leave";
+import Salary from "../pages/Salary";
+import Reports from "../pages/Reports";
 
 import MainLayout from "../layouts/MainLayout";
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -28,6 +31,14 @@ export default function AppRoutes() {
             path="/dashboard"
             element={<Dashboard />}
           />
+          <Route
+  path="/salary"
+  element={<Salary />}
+/>
+<Route
+  path="/reports"
+  element={<Reports />}
+/>
 
           <Route
             path="/employees"
@@ -48,10 +59,16 @@ export default function AppRoutes() {
             path="/attendance"
             element={<Attendance />}
           />
+
           <Route
-  path="/payroll"
-  element={<Payroll />}
-/>
+            path="/leave"
+            element={<Leave />}
+          />
+
+          <Route
+            path="/payroll"
+            element={<Payroll />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

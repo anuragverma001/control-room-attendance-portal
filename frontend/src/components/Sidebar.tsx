@@ -12,9 +12,10 @@ export default function Sidebar() {
   <Link to="/employees">Employees</Link>
   <Link to="/attendance">Attendance</Link>
   <Link to="/leave">Leave</Link>
-  <Link to="/salary">Salary</Link>
   <Link to="/payroll">Payroll</Link>
-</nav>
+  <Link to="/salary">Salary</Link>
+  <Link to="/reports">Reports</Link>
+      </nav>
 
       
     </div>
