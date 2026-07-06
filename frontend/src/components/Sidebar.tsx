@@ -8,17 +8,15 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex flex-col gap-2 p-4">
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/employees">Employees</Link>
-        <Link to="/attendance">Attendance</Link>
-        <Link to="/leave">Leave</Link>
-        <Link to="/salary">Salary</Link>
-      </nav>
-      <li>
-  <Link to="/attendance">
-    Attendance
-  </Link>
-</li>
+  <Link to="/dashboard">Dashboard</Link>
+  <Link to="/employees">Employees</Link>
+  <Link to="/attendance">Attendance</Link>
+  <Link to="/leave">Leave</Link>
+  <Link to="/salary">Salary</Link>
+  <Link to="/payroll">Payroll</Link>
+</nav>
+
+      
     </div>
   );
 }

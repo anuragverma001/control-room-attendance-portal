@@ -6,6 +6,7 @@ import Employees from "../pages/Employees";
 import Attendance from "../pages/Attendance";
 import AddEmployee from "../pages/AddEmployee";
 import EditEmployee from "../pages/EditEmployee";
+import Payroll from "../pages/Payroll";
 
 import MainLayout from "../layouts/MainLayout";
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -47,6 +48,10 @@ export default function AppRoutes() {
             path="/attendance"
             element={<Attendance />}
           />
+          <Route
+  path="/payroll"
+  element={<Payroll />}
+/>
         </Route>
       </Routes>
     </BrowserRouter>
