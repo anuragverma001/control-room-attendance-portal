@@ -13,6 +13,7 @@ import salaryRouter from "./routes/salary.routes";
 import dashboardRouter from "./routes/dashboard.routes";
 import reportRouter from "./routes/report.routes";
 import faceRouter from "./routes/face.routes";
+import payrollRoutes from "./routes/payroll.routes";
 
 
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api/salary", salaryRouter);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/reports", reportRouter);
 app.use("/api/face", faceRouter);
+app.use("/api/payroll", payrollRoutes);
 
 
 export default app;

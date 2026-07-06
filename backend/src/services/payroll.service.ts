@@ -1,6 +1,9 @@
 import { prisma } from "../config/prisma";
 import { Prisma } from "@prisma/client";
 
+
+
+
 export class PayrollService {
 
   static async generatePayroll(
@@ -104,33 +107,36 @@ export class PayrollService {
       const dailySalary = grossSalary / daysInMonth;
 
 
-    const presentDays =
+      const presentDays =
       attendance.filter(
-        a =>
+        (a) =>
           a.status === "PRESENT" ||
           a.status === "LATE"
       ).length;
 
-    const absentDays =
-      attendance.filter(
-        a =>
-          a.status === "ABSENT"
-      ).length;
 
-    const halfDays =
-      attendance.filter(
-        a =>
-          a.status === "HALF_DAY"
-      ).length;
+const absentDays =
+  attendance.filter(
+    (a) =>
+      a.status === "ABSENT"
+  ).length;
+
+
+const halfDays =
+  attendance.filter(
+    (a) =>
+      a.status === "HALF_DAY"
+  ).length;
 
     const leaveDays =
       approvedLeaves.length;
 
-    const lateCount =
-      attendance.filter(
-        a =>
-          a.status === "LATE"
-      ).length;
+      const lateCount =
+  attendance.filter(
+    (a) =>
+      a.status === "LATE"
+  ).length;
+
 
       const absentDeduction =
       dailySalary * absentDays;
@@ -346,7 +352,8 @@ static async getAllPayrolls(
 
   const skip = (page - 1) * limit;
 
-  const where: Prisma.PayrollWhereInput = {};
+  const where: any = {};
+  
 
   if (month) {
     where.month = month;
