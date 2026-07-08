@@ -1,10 +1,10 @@
 import { getDistance } from "geolib";
 
 export class GPSService {
-  static OFFICE_LAT = 26.8467;
-  static OFFICE_LNG = 80.9462;
+  static OFFICE_LAT = 26.9182;
+  static OFFICE_LNG = 80.9636;
 
-  static ALLOWED_RADIUS = 5000;
+  static ALLOWED_RADIUS = 200;
 
   static validateLocation(
     latitude: number,

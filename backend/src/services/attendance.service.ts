@@ -230,17 +230,31 @@ attendance.checkInTime!.getTime()
 (1000 * 60 * 60);
 
 let finalStatus =
-attendance.status;
+  attendance.status;
 
-if (totalHours < 4) {
-finalStatus =
-AttendanceStatus.ABSENT;
-} else if (
-totalHours < 6
-) {
-finalStatus =
-AttendanceStatus.HALF_DAY;
+/*
+0 hrs       = ABSENT
+0-4 hrs     = HALF_DAY
+4+ hrs      = PRESENT / LATE
+*/
+
+if (totalHours <= 0) {
+  finalStatus =
+    AttendanceStatus.ABSENT;
+
+} else if (totalHours < 4) {
+
+  finalStatus =
+    AttendanceStatus.HALF_DAY;
+
+} else {
+
+  finalStatus =
+    attendance.lateMinutes > 15
+      ? AttendanceStatus.LATE
+      : AttendanceStatus.PRESENT;
 }
+
 
 return await prisma.attendance.update({
 where: {
@@ -293,9 +307,11 @@ const attendance =
 return {
   total: attendance.length,
 
-  present: attendance.filter(
+  present:
+  attendance.filter(
     (a) =>
-      a.status === "PRESENT"
+      a.status === "PRESENT" ||
+      a.status === "LATE"
   ).length,
 
   late: attendance.filter(
@@ -388,11 +404,13 @@ return {
   totalDays:
     records.length,
 
-  present:
+    present:
     records.filter(
       (r) =>
-        r.status === "PRESENT"
+        r.status === "PRESENT" ||
+        r.status === "LATE"
     ).length,
+
 
   late:
     records.filter(
