@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../services/api";
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -16,15 +16,13 @@ export default function Dashboard() {
         attendanceRes,
         leaveRes,
       ] = await Promise.all([
-        axios.get(
-          "http://localhost:5000/api/employee/list"
-        ),
-        axios.get(
-          "http://localhost:5000/api/attendance/today"
-        ),
-        axios.get(
-          "http://localhost:5000/api/leave/pending"
-        ),
+      
+        api.get("/employee/list"),
+      
+        api.get("/attendance/today"),
+      
+        api.get("/leave/pending"),
+      
       ]);
 
       setStats({

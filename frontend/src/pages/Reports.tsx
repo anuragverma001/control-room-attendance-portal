@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../services/api";
+
 
 export default function Reports() {
   const [attendance, setAttendance] =
@@ -51,15 +52,10 @@ export default function Reports() {
         payrollRes,
         leaveRes,
       ] = await Promise.all([
-        axios.get(
-          "http://localhost:5000/api/attendance/list"
-        ),
-        axios.get(
-          "http://localhost:5000/api/payroll/list"
-        ),
-        axios.get(
-          "http://localhost:5000/api/leave/list"
-        ),
+
+        api.get("/attendance/list"),
+        api.get("/payroll/list"),
+        api.get("/leave/list"),
       ]);
 
       setAttendance(

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { leaveService } from "../services/leaveService";
+import api from "../services/api";
+
 
 export default function Leave() {
   const [leaves, setLeaves] = useState<any[]>([]);
@@ -8,9 +9,7 @@ export default function Leave() {
 
   const loadLeaves = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/leave/list"
-      );
+      const response = await api.get("/leave/list")
 
       setLeaves(response.data.data || []);
     } catch (error) {
