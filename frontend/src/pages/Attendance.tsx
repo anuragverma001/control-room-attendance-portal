@@ -352,8 +352,22 @@ export default function Attendance() {
               </td>
 
               <td className="border p-2">
-                {item.status}
-              </td>
+  <span
+    className={`px-2 py-1 rounded text-white text-sm ${
+      item.status === "PRESENT"
+        ? "bg-green-600"
+        : item.status === "LATE"
+        ? "bg-yellow-500"
+        : item.status === "HALF_DAY"
+        ? "bg-orange-500"
+        : item.status === "ABSENT"
+        ? "bg-red-600"
+        : "bg-gray-500"
+    }`}
+  >
+    {item.status}
+  </span>
+</td>
 
               <td className="border p-2">
                 {item.checkInTime
@@ -371,12 +385,9 @@ export default function Attendance() {
 </td>
 
 <td className="border p-2">
-  {item.totalHours
-    ? `${item.totalHours} hrs`
-    : "-"}
-</td>
-<td className="border p-2">
-  {Number(item.totalHours || 0).toFixed(2)} hrs
+  {Number(
+    item.totalHours || 0
+  ).toFixed(2)} hrs
 </td>
 
             </tr>

@@ -223,29 +223,26 @@ if (
 }
 
 const totalHours =
-(
-checkOutTime.getTime() -
-attendance.checkInTime!.getTime()
-) /
-(1000 * 60 * 60);
-
-let finalStatus =
-  attendance.status;
+  (
+    checkOutTime.getTime() -
+    attendance.checkInTime!.getTime()
+  ) /
+  (1000 * 60 * 60);
 
 /*
-0 hrs       = ABSENT
-0-4 hrs     = HALF_DAY
+0-1 hrs     = ABSENT
+1-4 hrs     = HALF_DAY
 4+ hrs      = PRESENT / LATE
 */
 
-if (totalHours <= 0) {
-  finalStatus =
-    AttendanceStatus.ABSENT;
+let finalStatus = attendance.status;
+
+if (totalHours < 1) {
+  finalStatus = AttendanceStatus.ABSENT;
 
 } else if (totalHours < 4) {
 
-  finalStatus =
-    AttendanceStatus.HALF_DAY;
+  finalStatus = AttendanceStatus.HALF_DAY;
 
 } else {
 
@@ -254,6 +251,8 @@ if (totalHours <= 0) {
       ? AttendanceStatus.LATE
       : AttendanceStatus.PRESENT;
 }
+
+
 
 
 return await prisma.attendance.update({
